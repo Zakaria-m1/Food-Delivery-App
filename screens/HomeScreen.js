@@ -1,5 +1,12 @@
-import { View, Text, SafeAreaView, Image, TextInput, ScrollView } from "react-native";
-import React, { useLayoutEffect } from "react";
+import {
+  View,
+  Text,
+  SafeAreaView,
+  Image,
+  TextInput,
+  ScrollView,
+} from "react-native";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import {
   UserIcon,
@@ -9,15 +16,38 @@ import {
 } from "react-native-heroicons/outline";
 import Categories from "../components/categories";
 import FeaturedRow from "../components/FeaturedRow";
+import sanityClient from "../sanity";
 
 const HomeScreen = () => {
   const navigation = useNavigation();
+  const [featuredCategories, setFeaturedCategories] = useState([]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
       headerShown: false,
     });
   }, []); // This is to make sure the
+
+  useEffect(() => {
+    sanityClient
+      .fetch(
+        `
+    *[_type == "featured"] {
+  ...,
+  restaurants[]->{
+    ...,
+  dishes[]->
+    }
+}
+    
+      `
+      )
+      .then((data) => {
+        setFeaturedCategories(data);
+      });
+  }, []);
+
+  console.log(featuredCategories);
 
   return (
     <SafeAreaView className="bg-white pt-5">
@@ -52,34 +82,28 @@ const HomeScreen = () => {
         <AdjustmentsVerticalIcon color="#00CCBB" />
       </View>
 
-      { <ScrollView className="bg-gray-100"
-      contentContainerStyle={{
-        paddingBottom: 100,
-      }}>
-        <Categories />
+      {
+        <ScrollView
+          className="bg-gray-100"
+          contentContainerStyle={{
+            paddingBottom: 100,
+          }}
+        >
+          <Categories />
 
-        {/* Featured Row */}
-        <FeaturedRow
-        id="789"
-        title="Featured"
-        description="Paid placements from our partners"
-        featuredCategory="featured"/>
-                
-        {/* Tasty Discounts */}        
-        <FeaturedRow
-        id="123"
-        title="Featured"
-        description="Paid placements from our partners"
-        featuredCategory="discounts"/>
+          {/* Featured Row */}
+          {featuredCategories?.map((category) => (
+            <FeaturedRow
+              key={category._id}
+              id={category._id} // Hack to make
+              title={category.name}
+              description={category.short_description}
+              featuredCategory="featured"
+            />
+          ))}
 
-        {/* Offers near you */}
-        <FeaturedRow
-        id="456"
-        title="Featured"
-        description="Paid placements from our partners"
-        featuredCategory="offers"/>
-
-      </ScrollView> }
+        </ScrollView>
+      }
     </SafeAreaView>
   );
 };

@@ -28,6 +28,11 @@ export default defineType({
       title: "Latitude of the Restaurant",
     },
     {
+      name: "lon",
+      type: "number",
+      title: "Longitude of the Restaurant"
+    },
+    {
       name: "address",
       type: "string",
       title: "Restaurant address",
