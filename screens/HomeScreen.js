@@ -90,7 +90,7 @@ const HomeScreen = () => {
           }}
         >
           <Categories />
-
+          
           {/* Featured Row */}
           {featuredCategories?.map((category) => (
             <FeaturedRow
@@ -101,7 +101,6 @@ const HomeScreen = () => {
               featuredCategory="featured"
             />
           ))}
-
         </ScrollView>
       }
     </SafeAreaView>
