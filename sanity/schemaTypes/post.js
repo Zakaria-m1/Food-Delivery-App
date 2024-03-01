@@ -28,7 +28,7 @@ export default defineType({
       title: "Latitude of the Restaurant",
     },
     {
-      name: "lon",
+      name: "long",
       type: "number",
       title: "Longitude of the Restaurant"
     },
